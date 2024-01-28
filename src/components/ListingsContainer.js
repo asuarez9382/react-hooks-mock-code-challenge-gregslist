@@ -1,11 +1,41 @@
-import React from "react";
-// import ListingCard from "./ListingCard";
+import React, { useState } from "react";
+import ListingCard from "./ListingCard";
 
-function ListingsContainer() {
+
+function ListingsContainer({ listings, setListings }) {
+
+  function handleDelete(e) {
+    console.log(e.target.parentNode.parentNode.id)
+    
+    let cardId = parseInt(e.target.parentNode.parentNode.id)
+
+    const newListings = listings.filter(listing=> cardId !== listing.id)
+
+    cardId = cardId.toString()
+
+    fetch(`http://localhost:6001/listings/${cardId}`, {
+      method:'DELETE',
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+      .then(data => setListings(newListings))
+
+  }
+
   return (
     <main>
       <ul className="cards">
-        {/* use the ListingCard component to display listings */}
+        {listings.map(listing => (
+          <ListingCard 
+            id={listing.id}
+            key={listing.id}
+            description={listing.description}
+            image={listing.image}
+            location={listing.location}
+            onDelete={handleDelete}
+          />
+        ))}
       </ul>
     </main>
   );
